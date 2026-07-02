@@ -17,7 +17,7 @@
     "lint": "eslint app --ext .js"
   },
   "keywords": [],
-  "author": "BADR Interactive",
+  "author": "Mega Agustin Azzahra",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.3",
