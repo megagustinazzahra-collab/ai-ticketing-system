@@ -1,0 +1,120 @@
+<!-- Filter Bar -->
+<div class="card mb-3">
+  <div class="card-body py-2">
+    <form method="GET" action="/tickets" class="form-inline flex-wrap" style="gap: 8px;">
+      <label class="mr-2 font-weight-600 small">Filter Status:</label>
+      <select name="status" class="form-control form-control-sm mr-2" onchange="this.form.submit()">
+        <option value="">Semua Status</option>
+        <option value="1" {{#equal statusFilter "1"}}selected{{/equal}}>Open</option>
+        <option value="2" {{#equal statusFilter "2"}}selected{{/equal}}>In Progress</option>
+        <option value="3" {{#equal statusFilter "3"}}selected{{/equal}}>Pending</option>
+        <option value="4" {{#equal statusFilter "4"}}selected{{/equal}}>Resolved</option>
+        <option value="5" {{#equal statusFilter "5"}}selected{{/equal}}>Closed</option>
+        <option value="6" {{#equal statusFilter "6"}}selected{{/equal}}>Rejected</option>
+      </select>
+      {{#if statusFilter}}
+      <a href="/tickets" class="btn btn-sm btn-back">Reset</a>
+      {{/if}}
+    </form>
+  </div>
+</div>
+
+<!-- Ticket Table -->
+<div class="card">
+  <div class="card-header">
+    <i class="fas fa-ticket-alt mr-2"></i>Daftar Tiket Saya
+    <span class="badge badge-secondary ml-1">{{total}}</span>
+  </div>
+  <div class="card-body p-0">
+
+    {{#if tickets.length}}
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th style="width:50px;">#</th>
+            <th>No. Tiket</th>
+            <th>Tipe Issue</th>
+            <th>Modul WMS</th>
+            <th>Status</th>
+            <th>Lampiran</th>
+            <th>Tanggal</th>
+            <th style="width:60px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each tickets}}
+          <tr>
+            <td class="text-muted small">{{add ../rowStart @index}}</td>
+            <td><code class="text-dark font-weight-bold">{{ticket_number}}</code></td>
+            <td>{{issue_type}}</td>
+            <td>
+              <span class="text-truncate d-inline-block" style="max-width:160px;" title="{{wms_module}}">
+                {{wms_module}}
+              </span>
+            </td>
+            <td>{{> ticket-status-badge status=status}}</td>
+            <td>
+              {{#if attachments.length}}
+              <span class="badge badge-light border">
+                <i class="fas fa-paperclip mr-1"></i>{{attachments.length}}
+              </span>
+              {{else}}
+              <span class="text-muted">—</span>
+              {{/if}}
+            </td>
+            <td class="text-muted small">{{getLocalTime created_at}}</td>
+            <td>
+              <a href="/tickets/{{uuid}}" class="btn btn-action-icon" title="Lihat Detail">
+                <i class="fas fa-eye" style="color: var(--primary-blue);"></i>
+              </a>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    {{#if (gt totalPages 1)}}
+    <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top">
+      <small class="text-muted">Halaman {{page}} dari {{totalPages}} ({{total}} tiket)</small>
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item {{#if hasPrev}}{{else}}disabled{{/if}}">
+            <a class="page-link" href="?page={{prevPage}}&paginate={{paginate}}{{#if statusFilter}}&status={{statusFilter}}{{/if}}">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+          </li>
+          <li class="page-item active">
+            <span class="page-link">{{page}}</span>
+          </li>
+          <li class="page-item {{#if hasNext}}{{else}}disabled{{/if}}">
+            <a class="page-link" href="?page={{nextPage}}&paginate={{paginate}}{{#if statusFilter}}&status={{statusFilter}}{{/if}}">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    {{/if}}
+
+    {{else}}
+    <div class="text-center py-5 text-muted">
+      <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+      <p class="mb-2">
+        {{#if statusFilter}}
+        Tidak ada tiket dengan status yang dipilih.
+        {{else}}
+        Belum ada tiket yang dilaporkan.
+        {{/if}}
+      </p>
+      <a href="/tickets/create" class="btn btn-primary-action btn-sm">
+        <i class="fas fa-plus mr-1"></i>Laporkan Issue
+      </a>
+    </div>
+    {{/if}}
+
+  </div>
+</div>
+

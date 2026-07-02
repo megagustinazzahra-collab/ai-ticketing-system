@@ -1,0 +1,102 @@
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span>
+      <i class="fas fa-bell mr-2"></i>Notifikasi
+      <span class="badge badge-secondary ml-1">{{total}}</span>
+    </span>
+    {{#if notifications.length}}
+    <button id="btn-mark-all-read" class="btn btn-sm btn-back">
+      <i class="fas fa-check-double mr-1"></i>Tandai Semua Dibaca
+    </button>
+    {{/if}}
+  </div>
+  <div class="card-body p-0">
+
+    {{#if notifications.length}}
+    <ul class="list-group list-group-flush">
+      {{#each notifications}}
+      <li class="list-group-item list-group-item-action {{#unless is_read}}bg-light{{/unless}} py-3"
+          data-uuid="{{uuid}}"
+          style="border-left: 4px solid {{#unless is_read}}var(--primary-blue){{else}}transparent{{/unless}};">
+        <div class="d-flex justify-content-between align-items-start">
+          <div class="flex-grow-1 mr-3">
+            <div class="d-flex align-items-center mb-1">
+              {{#unless is_read}}
+              <span class="badge badge-primary mr-2" style="font-size: 9px;">Baru</span>
+              {{/unless}}
+              <strong class="text-dark" style="font-size: 0.9rem;">{{title}}</strong>
+            </div>
+            <p class="mb-1 text-muted small">{{message}}</p>
+            <small class="text-muted">{{getLocalTime created_at}}</small>
+          </div>
+          {{#if ticket}}
+          {{#equal ../user.role_id 2}}
+          <a href="/helpdesk/tickets/{{ticket.uuid}}" class="btn btn-sm btn-action-icon flex-shrink-0" title="Lihat Tiket">
+            <i class="fas fa-external-link-alt" style="color: var(--primary-blue);"></i>
+          </a>
+          {{else}}
+          <a href="/tickets/{{ticket.uuid}}" class="btn btn-sm btn-action-icon flex-shrink-0" title="Lihat Tiket">
+            <i class="fas fa-external-link-alt" style="color: var(--primary-blue);"></i>
+          </a>
+          {{/equal}}
+          {{/if}}
+        </div>
+      </li>
+      {{/each}}
+    </ul>
+
+    <!-- Pagination -->
+    {{#if (gt totalPages 1)}}
+    <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top">
+      <small class="text-muted">Halaman {{page}} dari {{totalPages}} ({{total}} notifikasi)</small>
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item {{#if hasPrev}}{{else}}disabled{{/if}}">
+            <a class="page-link" href="?page={{prevPage}}&paginate={{paginate}}">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+          </li>
+          <li class="page-item active">
+            <span class="page-link">{{page}}</span>
+          </li>
+          <li class="page-item {{#if hasNext}}{{else}}disabled{{/if}}">
+            <a class="page-link" href="?page={{nextPage}}&paginate={{paginate}}">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    {{/if}}
+
+    {{else}}
+    <div class="text-center py-5 text-muted">
+      <i class="fas fa-bell-slash fa-3x mb-3 d-block"></i>
+      <p class="mb-0">Tidak ada notifikasi.</p>
+    </div>
+    {{/if}}
+
+  </div>
+</div>
+
+<script>
+$(document).ready(function () {
+  // Reset badge saat halaman notifikasi dibuka
+  $('#notif-badge').text('0').addClass('d-none')
+
+  // Tandai semua dibaca via API
+  $('#btn-mark-all-read').on('click', function () {
+    $.ajax({
+      url: '/api/v1/notifications/read-all',
+      method: 'PATCH',
+      success: function () {
+        $('.list-group-item').each(function () {
+          $(this).removeClass('bg-light').css('border-left-color', 'transparent')
+          $(this).find('.badge.badge-primary').remove()
+        })
+        $('#btn-mark-all-read').prop('disabled', true).text('Semua sudah dibaca')
+      },
+    })
+  })
+})
+</script>

@@ -1,0 +1,177 @@
+{{#>layouts/_layout}}
+
+<!-- Filter Bar -->
+<div class="card mb-3">
+  <div class="card-body py-2">
+    <form method="GET" action="/helpdesk/logs" class="row align-items-end" style="gap:0;">
+
+      <div class="col-auto mb-2">
+        <label class="small font-weight-600 d-block mb-1">Pengguna</label>
+        <select name="user_id" class="form-control form-control-sm" id="filter-user">
+          <option value="">Semua Pengguna</option>
+          {{#each users}}
+          <option value="{{id}}" {{#equal ../filters.user_id id}}selected{{/equal}}>
+            {{name}}
+          </option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="col-auto mb-2">
+        <label class="small font-weight-600 d-block mb-1">Aksi</label>
+        <select name="action" class="form-control form-control-sm" id="filter-action">
+          <option value="">Semua Aksi</option>
+          {{#each actionOptions}}
+          <option value="{{value}}" {{#equal ../filters.action value}}selected{{/equal}}>{{label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="col-auto mb-2">
+        <label class="small font-weight-600 d-block mb-1">Dari Tanggal</label>
+        <input type="date" name="start_date" class="form-control form-control-sm" value="{{filters.start_date}}" id="filter-start-date">
+      </div>
+
+      <div class="col-auto mb-2">
+        <label class="small font-weight-600 d-block mb-1">Sampai Tanggal</label>
+        <input type="date" name="end_date" class="form-control form-control-sm" value="{{filters.end_date}}" id="filter-end-date">
+      </div>
+
+      <div class="col-auto mb-2 d-flex align-items-end" style="gap:6px;">
+        <button type="submit" class="btn btn-primary-action btn-sm">
+          <i class="fas fa-search mr-1"></i>Filter
+        </button>
+        <a href="/helpdesk/logs" class="btn btn-back btn-sm">
+          <i class="fas fa-times mr-1"></i>Reset
+        </a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- Log Table -->
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span>
+      <i class="fas fa-history mr-2"></i>Log Aktivitas
+      <span class="badge badge-secondary ml-1">{{total}}</span>
+    </span>
+  </div>
+
+  <div class="card-body p-0">
+    {{#if logs.length}}
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th style="width:50px;">#</th>
+            <th>Pengguna</th>
+            <th>Aksi</th>
+            <th>Entitas</th>
+            <th>Detail</th>
+            <th>IP Address</th>
+            <th>Waktu</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each logs}}
+          <tr>
+            <td class="text-muted small">{{add ../rowStart @index}}</td>
+            <td class="small">
+              {{#if user}}
+              <span class="font-weight-600">{{user.name}}</span>
+              {{#equal user.role_id 2}}
+              <span class="badge badge-info ml-1" style="font-size:10px;">Helpdesk</span>
+              {{/equal}}
+              {{#equal user.role_id 1}}
+              <span class="badge badge-secondary ml-1" style="font-size:10px;">Reporter</span>
+              {{/equal}}
+              {{else}}
+              <span class="text-muted">—</span>
+              {{/if}}
+            </td>
+            <td>
+              {{#equal action "LOGIN"}}
+              <span class="badge badge-success">{{actionLabel}}</span>
+              {{/equal}}
+              {{#equal action "LOGIN_FAILED"}}
+              <span class="badge badge-danger">{{actionLabel}}</span>
+              {{/equal}}
+              {{#equal action "LOGOUT"}}
+              <span class="badge badge-secondary">{{actionLabel}}</span>
+              {{/equal}}
+              {{#equal action "REGISTER"}}
+              <span class="badge badge-primary">{{actionLabel}}</span>
+              {{/equal}}
+              {{#equal action "SUBMIT_TICKET"}}
+              <span class="badge badge-primary">{{actionLabel}}</span>
+              {{/equal}}
+              {{#equal action "UPDATE_TICKET_STATUS"}}
+              <span class="badge badge-info">{{actionLabel}}</span>
+              {{/equal}}
+              {{#equal action "ASSIGN_TICKET"}}
+              <span class="badge badge-info">{{actionLabel}}</span>
+              {{/equal}}
+              {{#equal action "UPDATE_HELPDESK_FIELDS"}}
+              <span class="badge badge-warning">{{actionLabel}}</span>
+              {{/equal}}
+              {{#equal action "ADD_COMMENT"}}
+              <span class="badge badge-secondary">{{actionLabel}}</span>
+              {{/equal}}
+              {{#equal action "DELETE_COMMENT"}}
+              <span class="badge badge-danger">{{actionLabel}}</span>
+              {{/equal}}
+              {{#equal action "CLOSE_TICKET"}}
+              <span class="badge badge-success">{{actionLabel}}</span>
+              {{/equal}}
+              {{#equal action "EXPORT_TICKETS"}}
+              <span class="badge badge-warning">{{actionLabel}}</span>
+              {{/equal}}
+            </td>
+            <td class="small text-muted">
+              {{#if entity_type}}{{entity_type}}{{#if entity_id}} #{{entity_id}}{{/if}}{{else}}—{{/if}}
+            </td>
+            <td class="small text-muted" style="max-width:220px; word-break:break-word;">
+              {{metaSummary}}
+            </td>
+            <td class="small text-muted">{{#if ip_address}}{{ip_address}}{{else}}—{{/if}}</td>
+            <td class="text-muted small" style="white-space:nowrap;">{{getLocalTime created_at}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    {{#if (gt totalPages 1)}}
+    <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top">
+      <small class="text-muted">Halaman {{page}} dari {{totalPages}} ({{total}} log)</small>
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item {{#if hasPrev}}{{else}}disabled{{/if}}">
+            <a class="page-link" href="?page={{prevPage}}&paginate={{paginate}}{{#if filters.user_id}}&user_id={{filters.user_id}}{{/if}}{{#if filters.action}}&action={{filters.action}}{{/if}}{{#if filters.start_date}}&start_date={{filters.start_date}}{{/if}}{{#if filters.end_date}}&end_date={{filters.end_date}}{{/if}}">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+          </li>
+          <li class="page-item active"><span class="page-link">{{page}}</span></li>
+          <li class="page-item {{#if hasNext}}{{else}}disabled{{/if}}">
+            <a class="page-link" href="?page={{nextPage}}&paginate={{paginate}}{{#if filters.user_id}}&user_id={{filters.user_id}}{{/if}}{{#if filters.action}}&action={{filters.action}}{{/if}}{{#if filters.start_date}}&start_date={{filters.start_date}}{{/if}}{{#if filters.end_date}}&end_date={{filters.end_date}}{{/if}}">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    {{/if}}
+
+    {{else}}
+    <div class="text-center py-5 text-muted">
+      <i class="fas fa-history fa-3x mb-3 d-block"></i>
+      <p class="mb-0">Tidak ada log aktivitas yang ditemukan.</p>
+    </div>
+    {{/if}}
+  </div>
+</div>
+
+{{/layouts/_layout}}

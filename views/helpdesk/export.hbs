@@ -1,0 +1,141 @@
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0"><i class="fas fa-file-excel mr-2" style="color:var(--accent-green);"></i>Ekspor Data Tiket</h5>
+  </div>
+  <div class="card-body">
+    <p class="text-muted mb-3">Pilih filter di bawah lalu klik <strong>Download Excel</strong> untuk mengunduh data tiket dalam format <code>.xlsx</code>.</p>
+
+    <form method="GET" action="/helpdesk/export/download" id="export-form">
+      <div class="row">
+
+        <!-- Status -->
+        <div class="col-md-4 mb-3">
+          <label class="font-weight-600">Status</label>
+          <select name="status" class="form-control">
+            <option value="">Semua Status</option>
+            <option value="1" {{#equal filters.status "1"}}selected{{/equal}}>Open</option>
+            <option value="2" {{#equal filters.status "2"}}selected{{/equal}}>In Progress</option>
+            <option value="3" {{#equal filters.status "3"}}selected{{/equal}}>Pending</option>
+            <option value="4" {{#equal filters.status "4"}}selected{{/equal}}>Resolved</option>
+            <option value="5" {{#equal filters.status "5"}}selected{{/equal}}>Closed</option>
+            <option value="6" {{#equal filters.status "6"}}selected{{/equal}}>Rejected</option>
+          </select>
+        </div>
+
+        <!-- Priority -->
+        <div class="col-md-4 mb-3">
+          <label class="font-weight-600">Priority</label>
+          <select name="priority" class="form-control">
+            <option value="">Semua Priority</option>
+            <option value="Critical" {{#equal filters.priority "Critical"}}selected{{/equal}}>Critical</option>
+            <option value="High"     {{#equal filters.priority "High"}}selected{{/equal}}>High</option>
+            <option value="Medium"   {{#equal filters.priority "Medium"}}selected{{/equal}}>Medium</option>
+            <option value="Low"      {{#equal filters.priority "Low"}}selected{{/equal}}>Low</option>
+          </select>
+        </div>
+
+        <!-- Severity -->
+        <div class="col-md-4 mb-3">
+          <label class="font-weight-600">Severity</label>
+          <select name="severity" class="form-control">
+            <option value="">Semua Severity</option>
+            <option value="Critical" {{#equal filters.severity "Critical"}}selected{{/equal}}>Critical</option>
+            <option value="High"     {{#equal filters.severity "High"}}selected{{/equal}}>High</option>
+            <option value="Medium"   {{#equal filters.severity "Medium"}}selected{{/equal}}>Medium</option>
+            <option value="Low"      {{#equal filters.severity "Low"}}selected{{/equal}}>Low</option>
+          </select>
+        </div>
+
+        <!-- Tipe Issue -->
+        <div class="col-md-4 mb-3">
+          <label class="font-weight-600">Tipe Issue</label>
+          <select name="issue_type" class="form-control">
+            <option value="">Semua Tipe Issue</option>
+            {{#each issueTypeOptions}}
+            <option value="{{this}}" {{#equal this ../filters.issue_type}}selected{{/equal}}>{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Modul WMS -->
+        <div class="col-md-4 mb-3">
+          <label class="font-weight-600">Modul WMS</label>
+          <select name="wms_module" class="form-control">
+            <option value="">Semua Modul</option>
+            {{#each wmsModuleOptions}}
+            <option value="{{this}}" {{#equal this ../filters.wms_module}}selected{{/equal}}>{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Placeholder kolom ke-3 supaya grid rapi -->
+        <div class="col-md-4 mb-3"></div>
+
+        <!-- Dari Tanggal -->
+        <div class="col-md-4 mb-3">
+          <label class="font-weight-600">Dari Tanggal</label>
+          <input type="date" name="start_date" class="form-control" value="{{filters.start_date}}">
+        </div>
+
+        <!-- Sampai Tanggal -->
+        <div class="col-md-4 mb-3">
+          <label class="font-weight-600">Sampai Tanggal</label>
+          <input type="date" name="end_date" class="form-control" value="{{filters.end_date}}">
+        </div>
+
+      </div>
+
+      <hr>
+
+      <div class="d-flex align-items-center" style="gap:12px;">
+        <button type="submit" class="btn btn-primary-action" id="btn-download">
+          <i class="fas fa-file-download mr-2"></i>Download Excel
+        </button>
+        <button type="button" class="btn btn-back" id="btn-reset">
+          <i class="fas fa-times mr-1"></i>Reset Filter
+        </button>
+        <small class="text-muted ml-auto">
+          <i class="fas fa-info-circle mr-1"></i>
+          Tanpa filter = seluruh data tiket diekspor.
+        </small>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Info kolom yang akan diekspor -->
+<div class="card mt-3">
+  <div class="card-header">
+    <h6 class="mb-0"><i class="fas fa-table mr-2"></i>Kolom yang Diekspor</h6>
+  </div>
+  <div class="card-body py-2">
+    <div class="row">
+      <div class="col-md-6">
+        <ul class="list-unstyled mb-0 small text-muted">
+          <li><i class="fas fa-check text-success mr-2"></i>No. Tiket &amp; Tanggal Laporan</li>
+          <li><i class="fas fa-check text-success mr-2"></i>Nama RS</li>
+          <li><i class="fas fa-check text-success mr-2"></i>Tipe Issue, Device, Modul WMS</li>
+          <li><i class="fas fa-check text-success mr-2"></i>Detail Problem &amp; Notes</li>
+          <li><i class="fas fa-check text-success mr-2"></i>Nama File Attachment</li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <ul class="list-unstyled mb-0 small text-muted">
+          <li><i class="fas fa-check text-success mr-2"></i>Severity &amp; Priority</li>
+          <li><i class="fas fa-check text-success mr-2"></i>Status</li>
+          <li><i class="fas fa-check text-success mr-2"></i>PIC &amp; Developer</li>
+          <li><i class="fas fa-check text-success mr-2"></i>CARD Jira</li>
+          <li><i class="fas fa-check text-success mr-2"></i>Tanggal Selesai &amp; Resolution Time</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function () {
+  $('#btn-reset').on('click', function () {
+    $('#export-form')[0].reset()
+  })
+})
+</script>

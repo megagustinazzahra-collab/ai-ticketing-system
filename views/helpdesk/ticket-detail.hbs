@@ -1,0 +1,398 @@
+<div class="row">
+
+  <!-- ═══════════════════════════════════════════════
+       KOLOM KIRI — Info tiket, lampiran, komentar
+  ════════════════════════════════════════════════ -->
+  <div class="col-lg-7">
+
+    <!-- Header Card -->
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center flex-wrap" style="gap:8px;">
+        <span>
+          <i class="fas fa-ticket-alt mr-2"></i>
+          <strong>{{ticket.ticket_number}}</strong>
+        </span>
+        <div class="d-flex align-items-center" style="gap:6px;">
+          {{> ticket-status-badge status=ticket.status}}
+          {{> sla-badge slaStatus=slaStatus}}
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- Info Baris 1 -->
+        <div class="row mb-3">
+          <div class="col-sm-6">
+            <dl class="row mb-0 small">
+              <dt class="col-sm-5 text-muted">Reporter</dt>
+              <dd class="col-sm-7">{{ticket.reporter.name}}</dd>
+
+              <dt class="col-sm-5 text-muted">Nama RS</dt>
+              <dd class="col-sm-7">{{ticket.reporter.hospital_name}}</dd>
+
+              <dt class="col-sm-5 text-muted">Email</dt>
+              <dd class="col-sm-7">{{ticket.reporter.email}}</dd>
+
+              <dt class="col-sm-5 text-muted">No. HP</dt>
+              <dd class="col-sm-7">{{#if ticket.reporter.phone}}{{ticket.reporter.phone}}{{else}}—{{/if}}</dd>
+            </dl>
+          </div>
+          <div class="col-sm-6">
+            <dl class="row mb-0 small">
+              <dt class="col-sm-5 text-muted">Tipe Issue</dt>
+              <dd class="col-sm-7">{{ticket.issue_type}}</dd>
+
+              <dt class="col-sm-5 text-muted">Device</dt>
+              <dd class="col-sm-7">{{ticket.device}}</dd>
+
+              <dt class="col-sm-5 text-muted">Modul WMS</dt>
+              <dd class="col-sm-7">{{ticket.wms_module}}</dd>
+
+              <dt class="col-sm-5 text-muted">Tanggal Lapor</dt>
+              <dd class="col-sm-7">{{getLocalTime ticket.created_at}}</dd>
+            </dl>
+          </div>
+        </div>
+
+        <hr class="my-2">
+
+        <!-- Detail Problem -->
+        <div class="mb-3">
+          <label class="text-muted small font-weight-600 d-block">Detail Problem</label>
+          <div class="border rounded p-3 bg-light small" style="white-space: pre-wrap;">{{ticket.problem_detail}}</div>
+        </div>
+
+        {{#if ticket.notes}}
+        <div class="mb-0">
+          <label class="text-muted small font-weight-600 d-block">Catatan</label>
+          <div class="border rounded p-3 bg-light small" style="white-space: pre-wrap;">{{ticket.notes}}</div>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+
+    <!-- Lampiran -->
+    {{#if attachments.length}}
+    <div class="card mb-3">
+      <div class="card-header">
+        <i class="fas fa-paperclip mr-2"></i>Lampiran ({{attachments.length}})
+      </div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          {{#each attachments}}
+          <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+            <span class="small">
+              <i class="fas fa-file mr-2 text-muted"></i>{{original_name}}
+              <span class="text-muted ml-2">({{fileSizeKb file_size}} KB)</span>
+            </span>
+            {{#if downloadUrl}}
+            <a href="{{downloadUrl}}" target="_blank" class="btn btn-sm btn-back">
+              <i class="fas fa-download mr-1"></i>Unduh
+            </a>
+            {{else}}
+            <span class="text-muted small">Link tidak tersedia</span>
+            {{/if}}
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- Komentar -->
+    <div class="card mb-3">
+      <div class="card-header">
+        <i class="fas fa-comments mr-2"></i>Komentar
+        {{#if ticket.comments.length}}
+        <span class="badge badge-secondary ml-1">{{ticket.comments.length}}</span>
+        {{/if}}
+      </div>
+      <div class="card-body p-0">
+
+        {{#if ticket.comments.length}}
+        <ul class="list-group list-group-flush">
+          {{#each ticket.comments}}
+          <li class="list-group-item py-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <div class="d-flex align-items-center mb-1">
+                  <strong class="small mr-2">{{author.name}}</strong>
+                  <span class="badge badge-{{#equal author.role_id 2}}info{{/equal}}{{#equal author.role_id 1}}secondary{{/equal}} badge-sm mr-2">
+                    {{#equal author.role_id 2}}Helpdesk{{/equal}}{{#equal author.role_id 1}}Reporter{{/equal}}
+                  </span>
+                  <span class="text-muted small">{{getLocalTime created_at}}</span>
+                </div>
+                <div class="small" style="white-space: pre-wrap;">{{content}}</div>
+              </div>
+              {{#equal author.id ../currentUserId}}
+              <form action="/helpdesk/tickets/{{../../ticket.uuid}}/comments/{{uuid}}/delete" method="POST" class="ml-2">
+                <input type="hidden" name="csrfToken" value="{{../../csrfToken}}">
+                <button type="button" class="btn btn-sm btn-link text-danger p-0" title="Hapus" onclick="if(confirm('Hapus komentar ini?')) this.closest('form').submit()">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </form>
+              {{/equal}}
+            </div>
+          </li>
+          {{/each}}
+        </ul>
+        {{else}}
+        <div class="text-center py-4 text-muted small">Belum ada komentar.</div>
+        {{/if}}
+
+        <!-- Form tambah komentar -->
+        <div class="card-footer border-top pt-3">
+          <form action="/helpdesk/tickets/{{ticket.uuid}}/comments" method="POST">
+            <input type="hidden" name="csrfToken" value="{{csrfToken}}">
+            <div class="form-group mb-2">
+              <textarea name="content" class="form-control form-control-sm" rows="3" placeholder="Tambah komentar..." required minlength="3" maxlength="2000"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary-action btn-sm">
+              <i class="fas fa-paper-plane mr-1"></i>Kirim Komentar
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       KOLOM KANAN — Aksi helpdesk + riwayat status
+  ════════════════════════════════════════════════ -->
+  <div class="col-lg-5">
+
+    <!-- ── Update Status ───────────────────────── -->
+    {{#if allowedTransitions.length}}
+    <div class="card mb-3 border-primary">
+      <div class="card-header bg-primary text-white">
+        <i class="fas fa-exchange-alt mr-2"></i>Update Status
+      </div>
+      <div class="card-body">
+        <form action="/helpdesk/tickets/{{ticket.uuid}}/status" method="POST">
+          <input type="hidden" name="csrfToken" value="{{csrfToken}}">
+
+          <div class="form-group mb-2">
+            <label class="small font-weight-600">Status Baru <span class="text-danger">*</span></label>
+            <select name="new_status" class="form-control form-control-sm" id="select-new-status" required>
+              <option value="">Pilih status...</option>
+              {{#each allowedTransitions}}
+              <option value="{{this}}">
+                {{#equal this 1}}Open{{/equal}}
+                {{#equal this 2}}In Progress{{/equal}}
+                {{#equal this 3}}Pending{{/equal}}
+                {{#equal this 4}}Resolved{{/equal}}
+                {{#equal this 5}}Closed{{/equal}}
+                {{#equal this 6}}Rejected{{/equal}}
+              </option>
+              {{/each}}
+            </select>
+          </div>
+
+          <div class="form-group mb-3" id="reason-group" style="display:none;">
+            <label class="small font-weight-600">Alasan Penolakan <span class="text-danger">*</span></label>
+            <textarea name="reason" class="form-control form-control-sm" rows="3" placeholder="Wajib diisi saat menolak tiket..." maxlength="500"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary-action btn-sm btn-block">
+            <i class="fas fa-check mr-1"></i>Simpan Status
+          </button>
+        </form>
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- ── SLA Info ─────────────────────────────── -->
+    <div class="card mb-3">
+      <div class="card-header">
+        <i class="fas fa-clock mr-2"></i>SLA
+      </div>
+      <div class="card-body py-2">
+        {{#if ticket.sla_deadline}}
+        <dl class="row mb-0 small">
+          <dt class="col-sm-5 text-muted">Priority</dt>
+          <dd class="col-sm-7">
+            <span class="badge
+              {{#equal ticket.priority "Critical"}}badge-danger{{/equal}}
+              {{#equal ticket.priority "High"}}badge-warning{{/equal}}
+              {{#equal ticket.priority "Medium"}}badge-info{{/equal}}
+              {{#equal ticket.priority "Low"}}badge-secondary{{/equal}}">
+              {{ticket.priority}}
+            </span>
+          </dd>
+
+          <dt class="col-sm-5 text-muted">Deadline</dt>
+          <dd class="col-sm-7">{{getLocalTime ticket.sla_deadline}}</dd>
+
+          <dt class="col-sm-5 text-muted">Status SLA</dt>
+          <dd class="col-sm-7">{{> sla-badge slaStatus=slaStatus}}</dd>
+
+          {{#if slaStatus.remainingLabel}}
+          <dt class="col-sm-5 text-muted">Sisa Waktu</dt>
+          <dd class="col-sm-7 {{#equal slaStatus.colorClass "danger"}}text-danger font-weight-bold{{/equal}}{{#equal slaStatus.colorClass "warning"}}text-warning font-weight-bold{{/equal}}">
+            {{#if slaStatus.isBreached}}
+              <span class="text-danger font-weight-bold">Terlampaui</span>
+            {{else}}
+              <span id="sla-countdown" data-deadline-ms="{{slaDeadlineMs}}">{{slaStatus.remainingLabel}}</span>
+            {{/if}}
+          </dd>
+          {{/if}}
+
+          {{#if ticket.resolution_minutes}}
+          <dt class="col-sm-5 text-muted">Resolution</dt>
+          <dd class="col-sm-7">{{ticket.resolution_minutes}} menit</dd>
+          {{/if}}
+        </dl>
+        {{else}}
+        <p class="text-muted small mb-0"><i class="fas fa-info-circle mr-1"></i>SLA belum aktif. Isi Priority untuk memulai.</p>
+        {{/if}}
+      </div>
+    </div>
+
+    <!-- ── Helpdesk Fields (Severity, Priority, Jira, Notes) ── -->
+    <div class="card mb-3">
+      <div class="card-header">
+        <i class="fas fa-edit mr-2"></i>Field Helpdesk
+      </div>
+      <div class="card-body">
+        <form action="/helpdesk/tickets/{{ticket.uuid}}/fields" method="POST">
+          <input type="hidden" name="csrfToken" value="{{csrfToken}}">
+
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group mb-2">
+                <label class="small font-weight-600">Severity</label>
+                <select name="severity" class="form-control form-control-sm">
+                  <option value="">—</option>
+                  <option value="Critical" {{#equal ticket.severity "Critical"}}selected{{/equal}}>Critical</option>
+                  <option value="High" {{#equal ticket.severity "High"}}selected{{/equal}}>High</option>
+                  <option value="Medium" {{#equal ticket.severity "Medium"}}selected{{/equal}}>Medium</option>
+                  <option value="Low" {{#equal ticket.severity "Low"}}selected{{/equal}}>Low</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group mb-2">
+                <label class="small font-weight-600">Priority</label>
+                <select name="priority" class="form-control form-control-sm">
+                  <option value="">—</option>
+                  <option value="Critical" {{#equal ticket.priority "Critical"}}selected{{/equal}}>Critical</option>
+                  <option value="High" {{#equal ticket.priority "High"}}selected{{/equal}}>High</option>
+                  <option value="Medium" {{#equal ticket.priority "Medium"}}selected{{/equal}}>Medium</option>
+                  <option value="Low" {{#equal ticket.priority "Low"}}selected{{/equal}}>Low</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mb-2">
+            <label class="small font-weight-600">CARD Jira</label>
+            <input type="text" name="jira_card" class="form-control form-control-sm" value="{{ticket.jira_card}}" placeholder="Contoh: WMS-123" maxlength="50">
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="small font-weight-600">Catatan Internal</label>
+            <textarea name="notes" class="form-control form-control-sm" rows="3" placeholder="Catatan untuk tim..." maxlength="2000">{{ticket.notes}}</textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary-action btn-sm btn-block">
+            <i class="fas fa-save mr-1"></i>Simpan Field
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── Assignment PIC & Developer ─────────── -->
+    <div class="card mb-3">
+      <div class="card-header">
+        <i class="fas fa-user-cog mr-2"></i>Assignment
+      </div>
+      <div class="card-body">
+        <form action="/helpdesk/tickets/{{ticket.uuid}}/assign" method="POST">
+          <input type="hidden" name="csrfToken" value="{{csrfToken}}">
+
+          <div class="form-group mb-2">
+            <label class="small font-weight-600">PIC (Person in Charge)</label>
+            <select name="pic_id" class="form-control form-control-sm">
+              <option value="">— Belum di-assign —</option>
+              {{#each helpdeskUsers}}
+              <option value="{{id}}" {{#equal id ../ticket.pic_id}}selected{{/equal}}>{{name}}</option>
+              {{/each}}
+            </select>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="small font-weight-600">Developer</label>
+            <input type="text" name="developer" class="form-control form-control-sm" value="{{ticket.developer}}" placeholder="Nama developer..." maxlength="100">
+          </div>
+
+          <button type="submit" class="btn btn-primary-action btn-sm btn-block">
+            <i class="fas fa-save mr-1"></i>Simpan Assignment
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── Riwayat Status ───────────────────────── -->
+    <div class="card">
+      <div class="card-header">
+        <i class="fas fa-history mr-2"></i>Riwayat Status
+      </div>
+      <div class="card-body p-3">
+        {{#if ticket.histories.length}}
+        <div class="timeline timeline-inverse">
+          {{#each ticket.histories}}
+          <div class="time-label">
+            <span class="bg-secondary" style="font-size:11px;">{{getLocalTime created_at}}</span>
+          </div>
+          <div>
+            <i class="fas fa-circle
+              {{#equal to_status 1}}text-primary{{/equal}}
+              {{#equal to_status 2}}text-info{{/equal}}
+              {{#equal to_status 3}}text-warning{{/equal}}
+              {{#equal to_status 4}}text-success{{/equal}}
+              {{#equal to_status 5}}text-secondary{{/equal}}
+              {{#equal to_status 6}}text-danger{{/equal}}"></i>
+            <div class="timeline-item">
+              <div class="timeline-body small">
+                <strong>
+                  {{#equal to_status 1}}Open{{/equal}}
+                  {{#equal to_status 2}}In Progress{{/equal}}
+                  {{#equal to_status 3}}Pending{{/equal}}
+                  {{#equal to_status 4}}Resolved{{/equal}}
+                  {{#equal to_status 5}}Closed{{/equal}}
+                  {{#equal to_status 6}}Rejected{{/equal}}
+                </strong>
+                {{#if actor}}<span class="text-muted"> oleh {{actor.name}}</span>{{/if}}
+                {{#if reason}}
+                <div class="text-muted mt-1" style="font-style:italic;">"{{reason}}"</div>
+                {{/if}}
+              </div>
+            </div>
+          </div>
+          {{/each}}
+          <div><i class="fas fa-clock text-muted"></i></div>
+        </div>
+        {{else}}
+        <p class="text-muted small mb-0">Belum ada riwayat status.</p>
+        {{/if}}
+      </div>
+    </div>
+
+  </div><!-- /col-lg-5 -->
+</div><!-- /row -->
+
+<!-- Toggle reason field saat status Rejected dipilih -->
+<script>
+  $('#select-new-status').on('change', function () {
+    const val = parseInt($(this).val(), 10)
+    if (val === 6) {
+      $('#reason-group').show()
+      $('#reason-group textarea').attr('required', true)
+    } else {
+      $('#reason-group').hide()
+      $('#reason-group textarea').removeAttr('required').val('')
+    }
+  })
+</script>
+<script src="/js/sla-countdown.js"></script>

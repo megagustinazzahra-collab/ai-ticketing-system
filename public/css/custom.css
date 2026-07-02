@@ -1,0 +1,168 @@
+/* ── Brand Colors ── */
+:root {
+  --primary-blue:       #1E3A5F;
+  --primary-blue-light: #2E75B6;
+  --accent-green:       #00A651;
+  --accent-green-hover: #009447;
+  --danger-red:         #dc3545;
+  --warning-yellow:     #F1B834;
+  --text-dark:          #212529;
+  --text-muted:         #6c757d;
+}
+
+/* ── Typography ── */
+body {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: var(--text-dark);
+}
+
+/* ── Sidebar ── */
+.main-sidebar,
+.main-sidebar::before {
+  background-color: var(--primary-blue);
+}
+
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
+  background-color: var(--accent-green);
+}
+
+.brand-link {
+  background-color: var(--primary-blue);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff !important;
+}
+
+/* ── Navbar ── */
+.main-header.navbar {
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* ── Buttons ── */
+.btn-primary-action {
+  background-color: var(--accent-green);
+  border-color: var(--accent-green);
+  color: #fff;
+  font-weight: 600;
+}
+.btn-primary-action:hover,
+.btn-primary-action:focus {
+  background-color: var(--accent-green-hover);
+  border-color: var(--accent-green-hover);
+  color: #fff;
+}
+
+.btn-back {
+  background-color: transparent;
+  border: 1px solid #ced4da;
+  color: var(--text-dark);
+}
+.btn-back:hover {
+  background-color: #f8f9fa;
+}
+
+.btn-upload {
+  background-color: var(--warning-yellow);
+  border-color: var(--warning-yellow);
+  color: #fff;
+  font-weight: 600;
+}
+.btn-upload:hover {
+  background-color: #d9a520;
+  border-color: #d9a520;
+  color: #fff;
+}
+
+.btn-action-icon {
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+}
+
+.btn-modal-submit {
+  background-color: var(--primary-blue);
+  border-color: var(--primary-blue);
+  color: #fff;
+}
+
+/* ── Auth Page ── */
+.auth-page .login-box {
+  width: 420px;
+}
+
+.auth-page .login-logo a {
+  color: var(--primary-blue);
+  font-size: 1.5rem;
+}
+
+.auth-page .card {
+  border-radius: 8px;
+}
+
+/* ── Cards & Tables ── */
+.card {
+  border-radius: 6px;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  font-weight: 600;
+}
+
+.table thead th {
+  background-color: var(--primary-blue);
+  color: #fff;
+  font-weight: 500;
+  font-size: 13px;
+  border: none;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* ── Badges ── */
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* ── SLA Badges ── */
+.badge-sla-warning {
+  background-color: var(--warning-yellow);
+  color: #fff;
+}
+.badge-sla-breach {
+  background-color: var(--danger-red);
+  color: #fff;
+}
+
+/* ── Form ── */
+.form-control:focus {
+  border-color: var(--primary-blue-light);
+  box-shadow: 0 0 0 0.2rem rgba(46, 117, 182, 0.15);
+}
+
+/* ── Content Header ── */
+.content-header {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 0;
+}
+
+/* ── Pagination ── */
+.pagination .page-item.active .page-link {
+  background-color: var(--primary-blue);
+  border-color: var(--primary-blue);
+}
+.pagination .page-link {
+  color: var(--primary-blue);
+}
+.pagination .page-link:hover {
+  color: var(--primary-blue-light);
+}

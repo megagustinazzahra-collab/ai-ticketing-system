@@ -1,0 +1,181 @@
+<div class="row">
+
+  <!-- Kolom kiri: Info tiket + aksi -->
+  <div class="col-lg-8">
+
+    <!-- Header Card -->
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>
+          <i class="fas fa-ticket-alt mr-2"></i>
+          <strong>{{ticket.ticket_number}}</strong>
+        </span>
+        <div>
+          {{> ticket-status-badge status=ticket.status}}
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-6">
+            <dl class="row mb-0">
+              <dt class="col-sm-5 text-muted small">Nama RS</dt>
+              <dd class="col-sm-7 small">{{ticket.reporter.hospital_name}}</dd>
+
+              <dt class="col-sm-5 text-muted small">Tipe Issue</dt>
+              <dd class="col-sm-7 small">{{ticket.issue_type}}</dd>
+
+              <dt class="col-sm-5 text-muted small">Device</dt>
+              <dd class="col-sm-7 small">{{ticket.device}}</dd>
+
+              <dt class="col-sm-5 text-muted small">Modul WMS</dt>
+              <dd class="col-sm-7 small">{{ticket.wms_module}}</dd>
+            </dl>
+          </div>
+          <div class="col-sm-6">
+            <dl class="row mb-0">
+              <dt class="col-sm-5 text-muted small">Tanggal</dt>
+              <dd class="col-sm-7 small">{{getLocalTime ticket.created_at}}</dd>
+
+              <dt class="col-sm-5 text-muted small">Priority</dt>
+              <dd class="col-sm-7 small">
+                {{#if ticket.priority}}
+                <span class="badge
+                  {{#equal ticket.priority "Critical"}}badge-danger{{/equal}}
+                  {{#equal ticket.priority "High"}}badge-warning{{/equal}}
+                  {{#equal ticket.priority "Medium"}}badge-info{{/equal}}
+                  {{#equal ticket.priority "Low"}}badge-secondary{{/equal}}">
+                  {{ticket.priority}}
+                </span>
+                {{else}}
+                <span class="text-muted">—</span>
+                {{/if}}
+              </dd>
+
+              <dt class="col-sm-5 text-muted small">PIC</dt>
+              <dd class="col-sm-7 small">{{#if ticket.pic}}{{ticket.pic.name}}{{else}}—{{/if}}</dd>
+            </dl>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="mb-3">
+          <label class="text-muted small font-weight-600 d-block">Detail Problem</label>
+          <div class="border rounded p-3 bg-light small" style="white-space: pre-wrap;">{{ticket.problem_detail}}</div>
+        </div>
+
+        {{#if ticket.notes}}
+        <div class="mb-0">
+          <label class="text-muted small font-weight-600 d-block">Catatan Tambahan</label>
+          <div class="border rounded p-3 bg-light small" style="white-space: pre-wrap;">{{ticket.notes}}</div>
+        </div>
+        {{/if}}
+      </div>
+
+      <!-- Tombol Close tiket (hanya jika Resolved) -->
+      {{#if canClose}}
+      <div class="card-footer bg-success-light border-top" style="background: #f0fff4;">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <i class="fas fa-check-circle text-success mr-2"></i>
+            <span class="small">Issue telah diselesaikan oleh tim helpdesk. Silakan konfirmasi jika masalah sudah teratasi.</span>
+          </div>
+          <form action="/tickets/{{ticket.uuid}}/close" method="POST" id="close-form">
+            <input type="hidden" name="csrfToken" value="{{csrfToken}}">
+            <button type="button" class="btn btn-primary-action btn-sm" id="btn-close-ticket">
+              <i class="fas fa-check mr-1"></i>Konfirmasi Selesai
+            </button>
+          </form>
+        </div>
+      </div>
+      {{/if}}
+    </div>
+
+    <!-- Lampiran -->
+    {{#if attachments.length}}
+    <div class="card mb-3">
+      <div class="card-header">
+        <i class="fas fa-paperclip mr-2"></i>Lampiran ({{attachments.length}})
+      </div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          {{#each attachments}}
+          <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+            <span class="small">
+              <i class="fas fa-file mr-2 text-muted"></i>{{original_name}}
+              <span class="text-muted ml-2">({{fileSizeKb file_size}} KB)</span>
+            </span>
+            {{#if downloadUrl}}
+            <a href="{{downloadUrl}}" target="_blank" class="btn btn-sm btn-back">
+              <i class="fas fa-download mr-1"></i>Unduh
+            </a>
+            {{else}}
+            <span class="text-muted small">Link tidak tersedia</span>
+            {{/if}}
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+    {{/if}}
+
+  </div>
+
+  <!-- Kolom kanan: Riwayat Status -->
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header">
+        <i class="fas fa-history mr-2"></i>Riwayat Status
+      </div>
+      <div class="card-body p-3">
+        {{#if histories.length}}
+        <div class="timeline timeline-inverse">
+          {{#each histories}}
+          <div class="time-label">
+            <span class="bg-secondary" style="font-size:11px;">{{getLocalTime created_at}}</span>
+          </div>
+          <div>
+            <i class="fas fa-circle
+              {{#equal to_status 1}}text-primary{{/equal}}
+              {{#equal to_status 2}}text-info{{/equal}}
+              {{#equal to_status 3}}text-warning{{/equal}}
+              {{#equal to_status 4}}text-success{{/equal}}
+              {{#equal to_status 5}}text-secondary{{/equal}}
+              {{#equal to_status 6}}text-danger{{/equal}}"></i>
+            <div class="timeline-item">
+              <div class="timeline-body small">
+                <strong>
+                  {{#equal to_status 1}}Open{{/equal}}
+                  {{#equal to_status 2}}In Progress{{/equal}}
+                  {{#equal to_status 3}}Pending{{/equal}}
+                  {{#equal to_status 4}}Resolved{{/equal}}
+                  {{#equal to_status 5}}Closed{{/equal}}
+                  {{#equal to_status 6}}Rejected{{/equal}}
+                </strong>
+                {{#if actor}}<span class="text-muted"> oleh {{actor.name}}</span>{{/if}}
+                {{#if reason}}
+                <div class="text-muted mt-1" style="font-style:italic;">"{{reason}}"</div>
+                {{/if}}
+              </div>
+            </div>
+          </div>
+          {{/each}}
+          <div><i class="fas fa-clock text-muted"></i></div>
+        </div>
+        {{else}}
+        <p class="text-muted small mb-0">Belum ada riwayat status.</p>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Konfirmasi close modal-less -->
+<script>
+  $('#btn-close-ticket')?.on('click', function () {
+    if (confirm('Apakah Anda yakin issue sudah teratasi dan ingin menutup tiket ini?')) {
+      $('#close-form').submit()
+    }
+  })
+</script>

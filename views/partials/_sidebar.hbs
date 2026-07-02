@@ -1,0 +1,66 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <!-- Brand Logo -->
+  <a href="/" class="brand-link">
+    <span class="brand-text font-weight-bold">WMS Ticketing</span>
+  </a>
+
+  <div class="sidebar">
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+        {{#equal user.role_id 2}}
+        <!-- Helpdesk Menu -->
+        <li class="nav-item">
+          <a href="/helpdesk/dashboard" class="nav-link {{#equal activeMenu 'dashboard'}}active{{/equal}}">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>Dashboard</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/helpdesk/tickets" class="nav-link {{#equal activeMenu 'tickets'}}active{{/equal}}">
+            <i class="nav-icon fas fa-ticket-alt"></i>
+            <p>Manajemen Tiket</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/helpdesk/export" class="nav-link {{#equal activeMenu 'export'}}active{{/equal}}">
+            <i class="nav-icon fas fa-file-excel"></i>
+            <p>Ekspor Data</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/helpdesk/logs" class="nav-link {{#equal activeMenu 'logs'}}active{{/equal}}">
+            <i class="nav-icon fas fa-history"></i>
+            <p>Log Aktivitas</p>
+          </a>
+        </li>
+        {{/equal}}
+
+        {{#equal user.role_id 1}}
+        <!-- Reporter Menu -->
+        <li class="nav-item">
+          <a href="/tickets" class="nav-link {{#equal activeMenu 'tickets'}}active{{/equal}}">
+            <i class="nav-icon fas fa-ticket-alt"></i>
+            <p>Tiket Saya</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/tickets/create" class="nav-link {{#equal activeMenu 'create'}}active{{/equal}}">
+            <i class="nav-icon fas fa-plus-circle"></i>
+            <p>Laporkan Issue</p>
+          </a>
+        </li>
+        {{/equal}}
+
+        <li class="nav-item">
+          <a href="/notifications" class="nav-link {{#equal activeMenu 'notifications'}}active{{/equal}}">
+            <i class="nav-icon fas fa-bell"></i>
+            <p>Notifikasi</p>
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+  </div>
+</aside>

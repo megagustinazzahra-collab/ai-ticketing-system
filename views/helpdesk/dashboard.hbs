@@ -1,0 +1,310 @@
+<!-- ── Stat Cards ─────────────────────────────────────────────────────── -->
+<div class="row">
+
+  <!-- Total -->
+  <div class="col-6 col-md-3">
+    <div class="small-box bg-gradient-light">
+      <div class="inner">
+        <h3>{{stats.total}}</h3>
+        <p>Total Tiket</p>
+      </div>
+      <div class="icon"><i class="fas fa-ticket-alt"></i></div>
+      <a href="/helpdesk/tickets" class="small-box-footer">Lihat Semua <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+
+  <!-- Open -->
+  <div class="col-6 col-md-3">
+    <div class="small-box" style="background-color:#1E3A5F; color:#fff;">
+      <div class="inner">
+        <h3>{{stats.open}}</h3>
+        <p>Open</p>
+      </div>
+      <div class="icon"><i class="fas fa-inbox"></i></div>
+      <a href="/helpdesk/tickets?status=1" class="small-box-footer" style="color:rgba(255,255,255,0.7);">Lihat <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+
+  <!-- In Progress -->
+  <div class="col-6 col-md-3">
+    <div class="small-box bg-info">
+      <div class="inner">
+        <h3>{{stats.inProgress}}</h3>
+        <p>In Progress</p>
+      </div>
+      <div class="icon"><i class="fas fa-spinner"></i></div>
+      <a href="/helpdesk/tickets?status=2" class="small-box-footer">Lihat <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+
+  <!-- Pending -->
+  <div class="col-6 col-md-3">
+    <div class="small-box bg-warning">
+      <div class="inner">
+        <h3>{{stats.pending}}</h3>
+        <p>Pending</p>
+      </div>
+      <div class="icon"><i class="fas fa-pause-circle"></i></div>
+      <a href="/helpdesk/tickets?status=3" class="small-box-footer">Lihat <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+
+</div>
+
+<div class="row">
+
+  <!-- Resolved -->
+  <div class="col-6 col-md-3">
+    <div class="small-box bg-success">
+      <div class="inner">
+        <h3>{{stats.resolved}}</h3>
+        <p>Resolved</p>
+      </div>
+      <div class="icon"><i class="fas fa-check-circle"></i></div>
+      <a href="/helpdesk/tickets?status=4" class="small-box-footer">Lihat <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+
+  <!-- Closed -->
+  <div class="col-6 col-md-3">
+    <div class="small-box bg-secondary">
+      <div class="inner">
+        <h3>{{stats.closed}}</h3>
+        <p>Closed</p>
+      </div>
+      <div class="icon"><i class="fas fa-check-double"></i></div>
+      <a href="/helpdesk/tickets?status=5" class="small-box-footer">Lihat <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+
+  <!-- Hari ini -->
+  <div class="col-6 col-md-3">
+    <div class="small-box" style="background-color:#00A651; color:#fff;">
+      <div class="inner">
+        <h3>{{stats.todayCount}}</h3>
+        <p>Tiket Hari Ini</p>
+      </div>
+      <div class="icon"><i class="fas fa-calendar-day"></i></div>
+      <a href="/helpdesk/tickets" class="small-box-footer" style="color:rgba(255,255,255,0.7);">Lihat <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+
+  <!-- Minggu ini -->
+  <div class="col-6 col-md-3">
+    <div class="small-box" style="background-color:#2E75B6; color:#fff;">
+      <div class="inner">
+        <h3>{{stats.weekCount}}</h3>
+        <p>Tiket Minggu Ini</p>
+      </div>
+      <div class="icon"><i class="fas fa-calendar-week"></i></div>
+      <a href="/helpdesk/tickets" class="small-box-footer" style="color:rgba(255,255,255,0.7);">Lihat <i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Priority & SLA Summary ────────────────────────────────────────── -->
+<div class="row">
+
+  <!-- Distribusi Priority -->
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-flag mr-2"></i>Distribusi Priority (Aktif)</h3>
+      </div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><span class="badge badge-danger mr-2">●</span>Critical</span>
+            <span class="font-weight-bold">{{byPriority.critical}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><span class="badge badge-warning mr-2">●</span>High</span>
+            <span class="font-weight-bold">{{byPriority.high}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><span class="badge badge-info mr-2">●</span>Medium</span>
+            <span class="font-weight-bold">{{byPriority.medium}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><span class="badge badge-secondary mr-2">●</span>Low</span>
+            <span class="font-weight-bold">{{byPriority.low}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLA Summary -->
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-clock mr-2"></i>Ringkasan SLA</h3>
+      </div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-exclamation-triangle text-danger mr-2"></i>SLA Breach (aktif)</span>
+            <span class="badge badge-danger badge-pill">{{stats.breachedCount}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-hourglass-half text-warning mr-2"></i>Mendekati SLA</span>
+            <span class="badge badge-warning badge-pill">{{stats.warningCount}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-times-circle text-danger mr-2"></i>Rejected</span>
+            <span class="badge badge-secondary badge-pill">{{stats.rejected}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Overview -->
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-chart-pie mr-2"></i>Status Tiket</h3>
+      </div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{> ticket-status-badge status=1}}</span>
+            <span class="font-weight-bold">{{stats.open}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{> ticket-status-badge status=2}}</span>
+            <span class="font-weight-bold">{{stats.inProgress}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{> ticket-status-badge status=3}}</span>
+            <span class="font-weight-bold">{{stats.pending}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{> ticket-status-badge status=4}}</span>
+            <span class="font-weight-bold">{{stats.resolved}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Tabel SLA Breach ───────────────────────────────────────────────── -->
+{{#if breachedTickets.length}}
+<div class="card card-danger card-outline">
+  <div class="card-header">
+    <h3 class="card-title">
+      <i class="fas fa-fire mr-2 text-danger"></i>
+      SLA Breach — Tiket Aktif ({{stats.breachedCount}})
+    </h3>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>No. Tiket</th>
+            <th>Nama RS</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Deadline SLA</th>
+            <th style="width:60px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each breachedTickets}}
+          <tr>
+            <td><code class="text-danger font-weight-bold">{{ticket_number}}</code></td>
+            <td class="small">{{reporter.hospital_name}}</td>
+            <td>
+              <span class="badge
+                {{#equal priority "Critical"}}badge-danger{{/equal}}
+                {{#equal priority "High"}}badge-warning{{/equal}}
+                {{#equal priority "Medium"}}badge-info{{/equal}}
+                {{#equal priority "Low"}}badge-secondary{{/equal}}">
+                {{priority}}
+              </span>
+            </td>
+            <td>{{> ticket-status-badge status=status}}</td>
+            <td class="small text-danger">{{getLocalTime sla_deadline}}</td>
+            <td>
+              <a href="/helpdesk/tickets/{{uuid}}" class="btn btn-action-icon" title="Lihat Detail">
+                <i class="fas fa-eye" style="color: var(--primary-blue);"></i>
+              </a>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{{/if}}
+
+<!-- ── Tabel SLA Warning ──────────────────────────────────────────────── -->
+{{#if warningTickets.length}}
+<div class="card card-warning card-outline">
+  <div class="card-header">
+    <h3 class="card-title">
+      <i class="fas fa-exclamation-triangle mr-2 text-warning"></i>
+      Mendekati SLA — Perlu Perhatian ({{stats.warningCount}})
+    </h3>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>No. Tiket</th>
+            <th>Nama RS</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Sisa Waktu</th>
+            <th>Deadline SLA</th>
+            <th style="width:60px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each warningTickets}}
+          <tr>
+            <td><code class="text-dark font-weight-bold">{{ticket_number}}</code></td>
+            <td class="small">{{reporter.hospital_name}}</td>
+            <td>
+              <span class="badge
+                {{#equal priority "Critical"}}badge-danger{{/equal}}
+                {{#equal priority "High"}}badge-warning{{/equal}}
+                {{#equal priority "Medium"}}badge-info{{/equal}}
+                {{#equal priority "Low"}}badge-secondary{{/equal}}">
+                {{priority}}
+              </span>
+            </td>
+            <td>{{> ticket-status-badge status=status}}</td>
+            <td><span class="badge badge-warning">{{slaStatus.remainingLabel}}</span></td>
+            <td class="small text-muted">{{getLocalTime sla_deadline}}</td>
+            <td>
+              <a href="/helpdesk/tickets/{{uuid}}" class="btn btn-action-icon" title="Lihat Detail">
+                <i class="fas fa-eye" style="color: var(--primary-blue);"></i>
+              </a>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{{/if}}
+
+<!-- Empty state jika tidak ada SLA issue -->
+{{#if (equal stats.breachedCount 0)}}
+{{#if (equal stats.warningCount 0)}}
+<div class="card">
+  <div class="card-body text-center py-4 text-muted">
+    <i class="fas fa-check-circle fa-2x mb-2 d-block text-success"></i>
+    <p class="mb-0">Tidak ada tiket dengan SLA breach atau warning saat ini.</p>
+  </div>
+</div>
+{{/if}}
+{{/if}}

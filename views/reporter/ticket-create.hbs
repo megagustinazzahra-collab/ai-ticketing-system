@@ -1,0 +1,128 @@
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-plus-circle mr-2" style="color: var(--accent-green);"></i>Form Laporan Issue</h5>
+      </div>
+      <div class="card-body">
+
+        <form action="/tickets/create" method="POST" enctype="multipart/form-data" id="ticket-form" novalidate>
+          <input type="hidden" name="csrfToken" value="{{csrfToken}}">
+
+          {{#if errors.general}}
+          <div class="alert alert-danger py-2 small">
+            <i class="fas fa-exclamation-circle mr-1"></i>{{errors.general}}
+          </div>
+          {{/if}}
+
+          <!-- Nama Fasyankes (read-only dari profil) -->
+          <div class="form-group">
+            <label class="font-weight-600">Nama Fasyankes / Entitas dan Lokasi</label>
+            <input type="text" class="form-control bg-light" value="{{hospitalName}}" readonly>
+            <small class="text-muted">Sesuai profil akun Anda.</small>
+          </div>
+
+          <!-- Tipe Issue -->
+          <div class="form-group">
+            <label for="issue_type" class="font-weight-600">Tipe Issue <span class="text-danger">*</span></label>
+            <select name="issue_type" id="issue_type"
+              class="form-control {{#if errors.issue_type}}is-invalid{{/if}}" required>
+              <option value="">— Pilih Tipe Issue —</option>
+              {{#each issueTypeOptions}}
+              <option value="{{this}}" {{#equal this ../old.issue_type}}selected{{/equal}}>{{this}}</option>
+              {{/each}}
+            </select>
+            {{#if errors.issue_type}}
+            <div class="invalid-feedback">{{#each errors.issue_type}}{{this}} {{/each}}</div>
+            {{/if}}
+          </div>
+
+          <!-- Device -->
+          <div class="form-group">
+            <label for="device" class="font-weight-600">Device <span class="text-danger">*</span></label>
+            <select name="device" id="device"
+              class="form-control {{#if errors.device}}is-invalid{{/if}}" required>
+              <option value="">— Pilih Device —</option>
+              {{#each deviceOptions}}
+              <option value="{{this}}" {{#equal this ../old.device}}selected{{/equal}}>{{this}}</option>
+              {{/each}}
+            </select>
+            {{#if errors.device}}
+            <div class="invalid-feedback">{{#each errors.device}}{{this}} {{/each}}</div>
+            {{/if}}
+          </div>
+
+          <!-- Modul WMS -->
+          <div class="form-group">
+            <label for="wms_module" class="font-weight-600">Modul WMS <span class="text-danger">*</span></label>
+            <select name="wms_module" id="wms_module"
+              class="form-control {{#if errors.wms_module}}is-invalid{{/if}}" required>
+              <option value="">— Pilih Modul WMS —</option>
+              {{#each wmsModuleOptions}}
+              <option value="{{this}}" {{#equal this ../old.wms_module}}selected{{/equal}}>{{this}}</option>
+              {{/each}}
+            </select>
+            {{#if errors.wms_module}}
+            <div class="invalid-feedback">{{#each errors.wms_module}}{{this}} {{/each}}</div>
+            {{/if}}
+          </div>
+
+          <!-- Detail Problem -->
+          <div class="form-group">
+            <label for="problem_detail" class="font-weight-600">Detail Problem <span class="text-danger">*</span></label>
+            <textarea name="problem_detail" id="problem_detail" rows="5"
+              class="form-control {{#if errors.problem_detail}}is-invalid{{/if}}"
+              placeholder="Jelaskan issue yang terjadi secara detail (minimal 10 karakter)..."
+              maxlength="5000" required>{{old.problem_detail}}</textarea>
+            {{#if errors.problem_detail}}
+            <div class="invalid-feedback">{{#each errors.problem_detail}}{{this}} {{/each}}</div>
+            {{/if}}
+            <small class="text-muted char-count" data-target="problem_detail">0 / 5000</small>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group">
+            <label for="notes" class="font-weight-600">Catatan Tambahan <span class="text-muted small">(opsional)</span></label>
+            <textarea name="notes" id="notes" rows="3"
+              class="form-control {{#if errors.notes}}is-invalid{{/if}}"
+              placeholder="Catatan tambahan jika ada..."
+              maxlength="1000">{{old.notes}}</textarea>
+            {{#if errors.notes}}
+            <div class="invalid-feedback">{{#each errors.notes}}{{this}} {{/each}}</div>
+            {{/if}}
+            <small class="text-muted char-count" data-target="notes">0 / 1000</small>
+          </div>
+
+          <!-- Attachment -->
+          <div class="form-group">
+            <label class="font-weight-600">Lampiran <span class="text-muted small">(opsional, maks. 5 file)</span></label>
+            <div>
+              <label for="attachments" class="btn btn-upload mb-1">
+                <i class="fas fa-paperclip mr-1"></i>Pilih File
+              </label>
+              <input type="file" name="attachments" id="attachments"
+                accept=".png,.jpg,.jpeg,.pdf" multiple class="d-none">
+              <span id="file-label" class="text-muted small ml-2">Belum ada file dipilih</span>
+            </div>
+            <small class="text-muted d-block mt-1">Format: PNG, JPG, JPEG, PDF. Maks. 5MB per file.</small>
+            <div id="file-preview" class="mt-2"></div>
+          </div>
+
+          <hr>
+
+          <div class="d-flex justify-content-between">
+            <a href="/tickets" class="btn btn-back">
+              <i class="fas fa-arrow-left mr-1"></i>Batal
+            </a>
+            <button type="submit" class="btn btn-primary-action" id="btn-submit">
+              <i class="fas fa-paper-plane mr-1"></i>Kirim Laporan
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/ticket-form.js"></script>

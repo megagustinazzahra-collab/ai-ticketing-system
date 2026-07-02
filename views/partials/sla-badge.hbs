@@ -1,0 +1,9 @@
+{{#if slaStatus.isBreached}}
+<span class="badge badge-danger"><i class="fas fa-exclamation-triangle mr-1"></i>SLA Breach</span>
+{{else if (equal slaStatus.colorClass "warning")}}
+<span class="badge badge-warning"><i class="fas fa-clock mr-1"></i>Mendekati</span>
+{{else if (equal slaStatus.colorClass "success")}}
+<span class="badge badge-success"><i class="fas fa-check mr-1"></i>On Track</span>
+{{else}}
+<span class="badge badge-light border text-muted">—</span>
+{{/if}}

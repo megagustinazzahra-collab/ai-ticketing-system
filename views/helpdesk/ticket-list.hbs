@@ -1,0 +1,168 @@
+<!-- Filter Bar -->
+<div class="card mb-3">
+  <div class="card-body py-2">
+    <form method="GET" action="/helpdesk/tickets" id="filter-form" class="row align-items-end" style="gap:0;">
+
+      <div class="col-auto mb-2">
+        <label class="small font-weight-600 d-block mb-1">Status</label>
+        <select name="status" class="form-control form-control-sm" id="filter-status">
+          <option value="">Semua Status</option>
+          <option value="1" {{#equal filters.status "1"}}selected{{/equal}}>Open</option>
+          <option value="2" {{#equal filters.status "2"}}selected{{/equal}}>In Progress</option>
+          <option value="3" {{#equal filters.status "3"}}selected{{/equal}}>Pending</option>
+          <option value="4" {{#equal filters.status "4"}}selected{{/equal}}>Resolved</option>
+          <option value="5" {{#equal filters.status "5"}}selected{{/equal}}>Closed</option>
+          <option value="6" {{#equal filters.status "6"}}selected{{/equal}}>Rejected</option>
+        </select>
+      </div>
+
+      <div class="col-auto mb-2">
+        <label class="small font-weight-600 d-block mb-1">Priority</label>
+        <select name="priority" class="form-control form-control-sm" id="filter-priority">
+          <option value="">Semua Priority</option>
+          <option value="Critical" {{#equal filters.priority "Critical"}}selected{{/equal}}>Critical</option>
+          <option value="High" {{#equal filters.priority "High"}}selected{{/equal}}>High</option>
+          <option value="Medium" {{#equal filters.priority "Medium"}}selected{{/equal}}>Medium</option>
+          <option value="Low" {{#equal filters.priority "Low"}}selected{{/equal}}>Low</option>
+        </select>
+      </div>
+
+      <div class="col-auto mb-2">
+        <label class="small font-weight-600 d-block mb-1">Tipe Issue</label>
+        <select name="issue_type" class="form-control form-control-sm" id="filter-issue-type">
+          <option value="">Semua Tipe</option>
+          <option value="Bug" {{#equal filters.issue_type "Bug"}}selected{{/equal}}>Bug</option>
+          <option value="Change" {{#equal filters.issue_type "Change"}}selected{{/equal}}>Change</option>
+          <option value="Cleansing" {{#equal filters.issue_type "Cleansing"}}selected{{/equal}}>Cleansing</option>
+          <option value="Inquiries" {{#equal filters.issue_type "Inquiries"}}selected{{/equal}}>Inquiries</option>
+          <option value="New Request" {{#equal filters.issue_type "New Request"}}selected{{/equal}}>New Request</option>
+          <option value="Performance" {{#equal filters.issue_type "Performance"}}selected{{/equal}}>Performance</option>
+          <option value="UI/UX" {{#equal filters.issue_type "UI/UX"}}selected{{/equal}}>UI/UX</option>
+          <option value="Lainnya" {{#equal filters.issue_type "Lainnya"}}selected{{/equal}}>Lainnya</option>
+        </select>
+      </div>
+
+      <div class="col-auto mb-2">
+        <label class="small font-weight-600 d-block mb-1">Dari Tanggal</label>
+        <input type="date" name="start_date" class="form-control form-control-sm" value="{{filters.start_date}}" id="filter-start-date">
+      </div>
+
+      <div class="col-auto mb-2">
+        <label class="small font-weight-600 d-block mb-1">Sampai Tanggal</label>
+        <input type="date" name="end_date" class="form-control form-control-sm" value="{{filters.end_date}}" id="filter-end-date">
+      </div>
+
+      <div class="col mb-2">
+        <label class="small font-weight-600 d-block mb-1">Cari</label>
+        <div class="input-group input-group-sm">
+          <input type="text" name="keyword" class="form-control" placeholder="No. tiket / detail..." value="{{filters.keyword}}" id="input-keyword">
+          <div class="input-group-append">
+            <button type="submit" class="btn btn-primary-action" id="btn-search">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-auto mb-2 d-flex align-items-end">
+        <a href="/helpdesk/tickets" class="btn btn-back btn-sm">
+          <i class="fas fa-times mr-1"></i>Reset
+        </a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- Ticket Table -->
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span>
+      <i class="fas fa-ticket-alt mr-2"></i>Semua Tiket
+      <span class="badge badge-secondary ml-1">{{total}}</span>
+    </span>
+  </div>
+
+  <div class="card-body p-0">
+    {{#if tickets.length}}
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th style="width:45px;">#</th>
+            <th>No. Tiket</th>
+            <th>Nama RS</th>
+            <th>Tipe Issue</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>SLA</th>
+            <th>Tanggal</th>
+            <th style="width:60px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each tickets}}
+          <tr>
+            <td class="text-muted small">{{add ../rowStart @index}}</td>
+            <td><code class="text-dark font-weight-bold">{{ticket_number}}</code></td>
+            <td class="small">{{reporter.hospital_name}}</td>
+            <td class="small">{{issue_type}}</td>
+            <td>
+              {{#if priority}}
+              <span class="badge
+                {{#equal priority "Critical"}}badge-danger{{/equal}}
+                {{#equal priority "High"}}badge-warning{{/equal}}
+                {{#equal priority "Medium"}}badge-info{{/equal}}
+                {{#equal priority "Low"}}badge-secondary{{/equal}}">
+                {{priority}}
+              </span>
+              {{else}}
+              <span class="text-muted small">—</span>
+              {{/if}}
+            </td>
+            <td>{{> ticket-status-badge status=status}}</td>
+            <td>{{> sla-badge slaStatus=slaStatus}}</td>
+            <td class="text-muted small">{{getLocalTime created_at}}</td>
+            <td>
+              <a href="/helpdesk/tickets/{{uuid}}" class="btn btn-action-icon" title="Lihat Detail">
+                <i class="fas fa-eye" style="color: var(--primary-blue);"></i>
+              </a>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    {{#if (gt totalPages 1)}}
+    <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top">
+      <small class="text-muted">Halaman {{page}} dari {{totalPages}} ({{total}} tiket)</small>
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item {{#if hasPrev}}{{else}}disabled{{/if}}">
+            <a class="page-link" href="?page={{prevPage}}&paginate={{paginate}}{{#if filters.status}}&status={{filters.status}}{{/if}}{{#if filters.priority}}&priority={{filters.priority}}{{/if}}{{#if filters.issue_type}}&issue_type={{filters.issue_type}}{{/if}}{{#if filters.keyword}}&keyword={{filters.keyword}}{{/if}}{{#if filters.start_date}}&start_date={{filters.start_date}}{{/if}}{{#if filters.end_date}}&end_date={{filters.end_date}}{{/if}}">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+          </li>
+          <li class="page-item active"><span class="page-link">{{page}}</span></li>
+          <li class="page-item {{#if hasNext}}{{else}}disabled{{/if}}">
+            <a class="page-link" href="?page={{nextPage}}&paginate={{paginate}}{{#if filters.status}}&status={{filters.status}}{{/if}}{{#if filters.priority}}&priority={{filters.priority}}{{/if}}{{#if filters.issue_type}}&issue_type={{filters.issue_type}}{{/if}}{{#if filters.keyword}}&keyword={{filters.keyword}}{{/if}}{{#if filters.start_date}}&start_date={{filters.start_date}}{{/if}}{{#if filters.end_date}}&end_date={{filters.end_date}}{{/if}}">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    {{/if}}
+
+    {{else}}
+    <div class="text-center py-5 text-muted">
+      <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+      <p class="mb-0">Tidak ada tiket yang ditemukan.</p>
+    </div>
+    {{/if}}
+  </div>
+</div>
+
+<script src="/js/list.js"></script>
